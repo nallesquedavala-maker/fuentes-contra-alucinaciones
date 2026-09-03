@@ -1,5 +1,5 @@
 import { challenges, getChallenge } from "./data.js";
-import { getTeam, mode, registerTeam, updateTeam } from "./storage.js";
+import { deleteTeam, getTeam, mode, registerTeam, updateTeam } from "./storage.js";
 
 const app = document.querySelector("#app");
 const syncStatus = document.querySelector("#syncStatus");
@@ -24,6 +24,19 @@ function clearDevice() {
   localStorage.removeItem(deviceKey);
   state = { session: "", team: null, selected: "", answered: false };
   renderRegister();
+}
+
+async function resetActivity() {
+  const button = document.querySelector("#restartActivity");
+  button.disabled = true;
+  button.textContent = "Eliminando registro…";
+  try {
+    await deleteTeam(state.session, state.team.id);
+    clearDevice();
+  } catch {
+    button.disabled = false;
+    button.textContent = "No se pudo eliminar. Intentar de nuevo";
+  }
 }
 
 function setSyncLabel(currentMode) {
@@ -200,7 +213,7 @@ function renderResult(challenge) {
       </div>
     </section>`;
   document.querySelector("#reviewCase").addEventListener("click", renderGame);
-  document.querySelector("#restartActivity").addEventListener("click", clearDevice);
+  document.querySelector("#restartActivity").addEventListener("click", resetActivity);
 }
 
 async function restore() {
