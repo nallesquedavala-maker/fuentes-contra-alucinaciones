@@ -1,5 +1,5 @@
 import { challenges, getChallenge } from "./data.js";
-import { getTeam, hideTeam, mode, registerTeam, updateTeam } from "./storage.js";
+import { getTeam, mode, registerTeam, updateTeam } from "./storage.js";
 
 const app = document.querySelector("#app");
 const syncStatus = document.querySelector("#syncStatus");
@@ -24,19 +24,6 @@ function clearDevice() {
   localStorage.removeItem(deviceKey);
   state = { session: "", team: null, selected: "", answered: false };
   renderRegister();
-}
-
-async function resetActivity() {
-  const button = document.querySelector("#restartActivity");
-  button.disabled = true;
-  button.textContent = "Quitando del tablero…";
-  try {
-    await hideTeam(state.session, state.team.id);
-    clearDevice();
-  } catch {
-    button.disabled = false;
-    button.textContent = "No se pudo quitar. Intentar de nuevo";
-  }
 }
 
 function setSyncLabel(currentMode) {
@@ -198,22 +185,26 @@ async function handleAnswer(event, challenge, step, stepIndex) {
 function renderResult(challenge) {
   const score = Number(state.team.score) || 0;
   const max = challenge.steps.filter((step) => step.scored).length;
+  const confetti = Array.from({ length: 48 }, (_, index) => `<i style="--x:${(index * 37) % 100};--delay:${(index % 12) * 0.08}s;--duration:${2.4 + (index % 5) * 0.25}s"></i>`).join("");
   app.innerHTML = `
     <section class="result-layout">
+      <div class="confetti" aria-hidden="true">${confetti}</div>
       <div class="result-card">
         <p class="eyebrow">Expediente entregado</p>
-        <div class="score-ring" style="--score:${Math.round((score / max) * 100)}"><strong>${score}/${max}</strong><span>decisiones respaldadas</span></div>
-        <h1>${escapeHtml(state.team.name)}</h1>
-        <p>Su conclusión ya aparece en el tablero. La aportación abierta se utilizará en la discusión grupal.</p>
+        <h1>¡Terminaron, ${escapeHtml(state.team.name)}!</h1>
+        <p class="result-lede">Su descubrimiento ya está listo para compartirlo en la discusión grupal.</p>
+        <blockquote class="result-contribution">
+          <span>Aportación del equipo</span>
+          <p>“${escapeHtml(state.team.contribution)}”</p>
+        </blockquote>
+        <div class="result-score-compact"><strong>${score}/${max}</strong><span>decisiones respaldadas</span></div>
         <div class="result-actions">
           <a class="primary-button" href="tablero.html" target="_blank">Ver tablero</a>
           <button id="reviewCase" class="secondary-button">Revisar expediente</button>
-          <button id="restartActivity" class="secondary-button" type="button">Reiniciar actividad</button>
         </div>
       </div>
     </section>`;
   document.querySelector("#reviewCase").addEventListener("click", renderGame);
-  document.querySelector("#restartActivity").addEventListener("click", resetActivity);
 }
 
 async function restore() {

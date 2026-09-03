@@ -105,21 +105,6 @@ export async function updateTeam(session, teamId, patch) {
   writeLocal(safeSession, state);
 }
 
-export async function hideTeam(session, teamId) {
-  const safeSession = cleanSessionCode(session);
-  if (await initFirebase().catch(() => false)) {
-    await firebaseApi.update(firebaseApi.ref(database, `sessions/${safeSession}/teams/${teamId}`), {
-      hidden: true,
-      updatedAt: Date.now()
-    });
-    return;
-  }
-  const state = readLocal(safeSession);
-  if (!state.teams[teamId]) return;
-  state.teams[teamId] = { ...state.teams[teamId], hidden: true, updatedAt: Date.now() };
-  writeLocal(safeSession, state);
-}
-
 export async function getTeam(session, teamId) {
   const safeSession = cleanSessionCode(session);
   if (await initFirebase().catch(() => false)) {

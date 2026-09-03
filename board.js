@@ -6,7 +6,10 @@ const teamsGrid = document.querySelector("#teamsGrid");
 const insightsWall = document.querySelector("#insightsWall");
 const sessionInput = document.querySelector("#boardSession");
 const lastUpdate = document.querySelector("#lastUpdate");
+const FACILITATOR_CODE = "8989";
 let unsubscribe = null;
+let currentSession = "";
+let currentTeams = {};
 
 function escapeHtml(value) {
   return String(value || "")
@@ -22,7 +25,9 @@ function verdictLabel(value) {
 }
 
 function render(teamsObject) {
-  const teams = Object.values(teamsObject || {}).filter((team) => !team.hidden).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  currentTeams = teamsObject || {};
+  const clearedAt = Number(localStorage.getItem(`utel-evidence-board-cleared:${currentSession}`)) || 0;
+  const teams = Object.values(currentTeams).filter((team) => !team.hidden && (Number(team.createdAt) || 0) > clearedAt).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
   const completed = teams.filter((team) => team.status === "completed").length;
   const totalScore = teams.reduce((sum, team) => sum + (Number(team.score) || 0), 0);
   const possible = teams.reduce((sum, team) => sum + (Number(team.maxScore) || 5), 0);
@@ -61,6 +66,7 @@ function render(teamsObject) {
 async function openSession(value) {
   if (unsubscribe) unsubscribe();
   const session = cleanSessionCode(value);
+  currentSession = session;
   sessionInput.value = session;
   localStorage.setItem("utel-evidence-board-session", session);
   unsubscribe = await subscribeTeams(session, render);
@@ -69,6 +75,26 @@ async function openSession(value) {
 document.querySelector("#boardSessionForm").addEventListener("submit", (event) => {
   event.preventDefault();
   openSession(sessionInput.value);
+});
+
+document.querySelector("#facilitatorAccessForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const input = document.querySelector("#facilitatorCode");
+  const error = document.querySelector("#facilitatorError");
+  if (input.value.trim() !== FACILITATOR_CODE) {
+    error.textContent = "Código incorrecto";
+    return;
+  }
+  error.textContent = "";
+  event.currentTarget.hidden = true;
+  document.querySelector("#facilitatorControls").hidden = false;
+});
+
+document.querySelector("#clearBoardButton").addEventListener("click", () => {
+  if (!window.confirm("¿Ocultar todos los equipos actuales de este tablero?")) return;
+  localStorage.setItem(`utel-evidence-board-cleared:${currentSession}`, String(Date.now()));
+  localStorage.removeItem("utel-evidence-current-team");
+  render(currentTeams);
 });
 
 const savedSession = localStorage.getItem("utel-evidence-board-session") || new URLSearchParams(location.search).get("sesion") || "UTEL2026";
