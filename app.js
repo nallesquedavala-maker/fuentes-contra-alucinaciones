@@ -1,5 +1,5 @@
 import { challenges, getChallenge } from "./data.js";
-import { deleteTeam, getTeam, mode, registerTeam, updateTeam } from "./storage.js";
+import { getTeam, hideTeam, mode, registerTeam, updateTeam } from "./storage.js";
 
 const app = document.querySelector("#app");
 const syncStatus = document.querySelector("#syncStatus");
@@ -29,13 +29,13 @@ function clearDevice() {
 async function resetActivity() {
   const button = document.querySelector("#restartActivity");
   button.disabled = true;
-  button.textContent = "Eliminando registro…";
+  button.textContent = "Quitando del tablero…";
   try {
-    await deleteTeam(state.session, state.team.id);
+    await hideTeam(state.session, state.team.id);
     clearDevice();
   } catch {
     button.disabled = false;
-    button.textContent = "No se pudo eliminar. Intentar de nuevo";
+    button.textContent = "No se pudo quitar. Intentar de nuevo";
   }
 }
 

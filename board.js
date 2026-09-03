@@ -22,7 +22,7 @@ function verdictLabel(value) {
 }
 
 function render(teamsObject) {
-  const teams = Object.values(teamsObject || {}).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  const teams = Object.values(teamsObject || {}).filter((team) => !team.hidden).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
   const completed = teams.filter((team) => team.status === "completed").length;
   const totalScore = teams.reduce((sum, team) => sum + (Number(team.score) || 0), 0);
   const possible = teams.reduce((sum, team) => sum + (Number(team.maxScore) || 5), 0);

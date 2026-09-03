@@ -10,7 +10,7 @@
         },
         "teams": {
           "$team": {
-            ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() == auth.uid) || (data.exists() && data.child('ownerUid').val() == auth.uid && (!newData.exists() || newData.child('ownerUid').val() == auth.uid)))",
+            ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() == auth.uid) || (data.exists() && data.child('ownerUid').val() == auth.uid && newData.child('ownerUid').val() == auth.uid))",
             ".validate": "newData.hasChildren(['name', 'challengeId', 'stepIndex', 'score', 'maxScore', 'status', 'ownerUid']) && (data.exists() || newData.hasChild('members'))",
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
             "members": {
