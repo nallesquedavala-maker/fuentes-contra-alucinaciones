@@ -35,8 +35,10 @@
           <input id="sessionCode" name="sessionCode" maxlength="20" value="UTEL2026" autocomplete="off" required />
           <label for="teamName">Nombre o alias del equipo</label>
           <input id="teamName" name="teamName" maxlength="40" placeholder="Ej. Analistas del dato" autocomplete="off" required />
+          <label for="members">Nombres completos de los integrantes</label>
+          <textarea id="members" name="members" maxlength="800" rows="5" placeholder="Escriban un nombre completo por línea" autocomplete="off" required></textarea>
           <button class="primary-button" type="submit">Recibir desafío</button>
-          <p class="privacy-note">No escriban nombres completos ni información personal.</p>
+          <p class="privacy-note">Estos nombres quedarán asociados al registro del equipo.</p>
           <p id="formError" class="form-error" role="alert"></p>
         </form>
       </section>

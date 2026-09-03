@@ -52,11 +52,12 @@ export async function mode() {
   }
 }
 
-export async function registerTeam(session, teamName, challengeIds) {
+export async function registerTeam(session, teamName, members, challengeIds) {
   const safeSession = cleanSessionCode(session);
   const now = Date.now();
   const team = {
     name: teamName.trim().slice(0, 40),
+    members: members.slice(0, 15).map((name) => String(name).trim().replace(/\s+/g, " ").slice(0, 80)),
     createdAt: now,
     updatedAt: now,
     stepIndex: 0,

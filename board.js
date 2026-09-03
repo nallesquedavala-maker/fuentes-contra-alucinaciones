@@ -45,6 +45,7 @@ function render(teamsObject) {
         <div class="team-card-head"><span class="case-dot"></span><small>${escapeHtml(challenge.area)}</small><strong>${team.score || 0}/${team.maxScore || 5}</strong></div>
         <h3>${escapeHtml(team.name)}</h3>
         <p>${escapeHtml(challenge.shortTitle)}</p>
+        <p class="team-members">${(team.members || []).map(escapeHtml).join(" · ") || "Integrantes sin registrar"}</p>
         <div class="team-progress"><span style="width:${progress}%"></span></div>
         <div class="team-card-foot"><span>${team.status === "completed" ? "Entregado" : `Evidencia ${step} de ${challenge.steps.length}`}</span><span class="verdict">${verdictLabel(team.verdict)}</span></div>
       </article>`;

@@ -42,7 +42,21 @@ function renderRegister() {
     button.disabled = true;
     error.textContent = "";
     try {
-      const result = await registerTeam(form.get("sessionCode"), form.get("teamName"), challenges.map((item) => item.id));
+      const members = String(form.get("members") || "")
+        .split(/\r?\n/)
+        .map((name) => name.trim().replace(/\s+/g, " "))
+        .filter(Boolean);
+      if (!members.length) {
+        error.textContent = "Escriban al menos el nombre completo de un integrante.";
+        button.disabled = false;
+        return;
+      }
+      if (members.length > 15 || members.some((name) => name.length > 80)) {
+        error.textContent = "Registren máximo 15 integrantes y 80 caracteres por nombre.";
+        button.disabled = false;
+        return;
+      }
+      const result = await registerTeam(form.get("sessionCode"), form.get("teamName"), members, challenges.map((item) => item.id));
       state.session = result.session;
       state.team = result.team;
       saveDevice();

@@ -19,4 +19,4 @@ La aplicación inicia en modo demostración local. Abre la página principal y e
 
 ## Privacidad
 
-La versión mínima no solicita nombres completos, correos ni otros datos personales. Cada dispositivo recibe una identidad anónima temporal y solo puede modificar el expediente que creó. Conviene utilizar un código de sesión nuevo en cada evento.
+El registro solicita los nombres completos de los integrantes y los asocia con su equipo. Cada dispositivo recibe una identidad anónima temporal y solo puede modificar el expediente que creó. Conviene informar a los participantes sobre este tratamiento de datos y utilizar un código de sesión nuevo en cada evento.
