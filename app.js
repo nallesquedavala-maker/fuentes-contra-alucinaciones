@@ -122,7 +122,7 @@ function renderGame() {
           <fieldset ${state.answered ? "disabled" : ""}>
             <legend>${escapeHtml(step.question)}</legend>
             <div class="options-list">${renderOptions(step, existing)}</div>
-            ${step.openPrompt ? `<label class="open-label" for="contribution">${escapeHtml(step.openPrompt)}</label><textarea id="contribution" maxlength="250" rows="3" placeholder="Escriban un criterio concreto…" ${state.answered ? "disabled" : ""}>${escapeHtml(team.contribution || "")}</textarea><div class="char-count"><span id="charCount">${(team.contribution || "").length}</span>/250</div>` : ""}
+            ${step.openPrompt ? `<label class="open-label" for="contribution">${escapeHtml(step.openPrompt)}</label><textarea id="contribution" name="contribution" maxlength="250" rows="3" placeholder="Escriban un criterio concreto…" ${state.answered ? "disabled" : ""}>${escapeHtml(team.contribution || "")}</textarea><div class="char-count"><span id="charCount">${(team.contribution || "").length}</span>/250</div>` : ""}
           </fieldset>
           <div id="feedback" class="feedback ${state.answered ? (existing.correct ? "correct" : "review") : "hidden"}">
             <strong>${existing?.correct ? "Criterio respaldado" : "Revisen el razonamiento"}</strong>
