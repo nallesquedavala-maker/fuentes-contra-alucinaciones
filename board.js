@@ -83,6 +83,8 @@ sessionInput.addEventListener("input", () => {
   joinSession.href = `index.html?sesion=${encodeURIComponent(cleanSessionCode(sessionInput.value))}`;
 });
 
+sessionInput.addEventListener("change", () => openSession(sessionInput.value));
+
 document.querySelector("#facilitatorAccessForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const input = document.querySelector("#facilitatorCode");

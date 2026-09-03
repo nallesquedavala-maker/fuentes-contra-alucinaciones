@@ -202,11 +202,9 @@ function renderResult(challenge) {
         <div class="result-score-compact"><strong>${score}/${max}</strong><span>decisiones respaldadas</span></div>
         <div class="result-actions">
           <a class="primary-button" href="tablero.html" target="_blank">Ver tablero</a>
-          <button id="reviewCase" class="secondary-button">Revisar expediente</button>
         </div>
       </div>
     </section>`;
-  document.querySelector("#reviewCase").addEventListener("click", renderGame);
 }
 
 async function restore() {
