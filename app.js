@@ -1,5 +1,5 @@
 import { challenges, getChallenge } from "./data.js";
-import { getTeam, mode, registerTeam, updateTeam } from "./storage.js";
+import { cleanSessionCode, getTeam, mode, registerTeam, updateTeam } from "./storage.js";
 
 const app = document.querySelector("#app");
 const syncStatus = document.querySelector("#syncStatus");
@@ -34,6 +34,8 @@ function setSyncLabel(currentMode) {
 function renderRegister() {
   app.innerHTML = "";
   app.appendChild(registerTemplate.content.cloneNode(true));
+  const requestedSession = new URLSearchParams(location.search).get("sesion");
+  if (requestedSession) document.querySelector("#sessionCode").value = cleanSessionCode(requestedSession);
   document.querySelector("#registerForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);

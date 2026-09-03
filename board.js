@@ -5,6 +5,7 @@ const summary = document.querySelector("#boardSummary");
 const teamsGrid = document.querySelector("#teamsGrid");
 const insightsWall = document.querySelector("#insightsWall");
 const sessionInput = document.querySelector("#boardSession");
+const joinSession = document.querySelector("#joinSession");
 const lastUpdate = document.querySelector("#lastUpdate");
 const FACILITATOR_CODE = "8989";
 let unsubscribe = null;
@@ -68,6 +69,7 @@ async function openSession(value) {
   const session = cleanSessionCode(value);
   currentSession = session;
   sessionInput.value = session;
+  joinSession.href = `index.html?sesion=${encodeURIComponent(session)}`;
   localStorage.setItem("utel-evidence-board-session", session);
   unsubscribe = await subscribeTeams(session, render);
 }
@@ -75,6 +77,10 @@ async function openSession(value) {
 document.querySelector("#boardSessionForm").addEventListener("submit", (event) => {
   event.preventDefault();
   openSession(sessionInput.value);
+});
+
+sessionInput.addEventListener("input", () => {
+  joinSession.href = `index.html?sesion=${encodeURIComponent(cleanSessionCode(sessionInput.value))}`;
 });
 
 document.querySelector("#facilitatorAccessForm").addEventListener("submit", (event) => {
