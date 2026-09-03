@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08c900" />
+    <meta name="description" content="Workshop interactivo para auditar fuentes y evidencia." />
+    <title>Fuentes contra alucinaciones</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">U</span><span>Fuentes contra alucinaciones</span></div>
+        <div id="syncStatus" class="sync-status">Preparando sesión…</div>
+      </header>
+
+      <main id="app" class="app" aria-live="polite"></main>
+    </div>
+
+    <template id="registerTemplate">
+      <section class="register-layout">
+        <div class="intro-panel">
+          <p class="eyebrow">Workshop · Investigación y curaduría</p>
+          <h1>La gerencia necesita una decisión, no una respuesta convincente.</h1>
+          <p class="lede">Recibirán un expediente distinto. Revisen cada pieza, cambien de postura cuando la evidencia lo exija y documenten lo que todavía falta saber.</p>
+          <div class="principles" aria-label="Dinámica del juego">
+            <span>3 desafíos</span><span>6 etapas</span><span>1 decisión ejecutiva</span>
+          </div>
+        </div>
+
+        <form id="registerForm" class="register-card">
+          <h2>Registrar equipo</h2>
+          <label for="sessionCode">Código de sesión</label>
+          <input id="sessionCode" name="sessionCode" maxlength="20" value="UTEL2026" autocomplete="off" required />
+          <label for="teamName">Nombre o alias del equipo</label>
+          <input id="teamName" name="teamName" maxlength="40" placeholder="Ej. Analistas del dato" autocomplete="off" required />
+          <button class="primary-button" type="submit">Recibir desafío</button>
+          <p class="privacy-note">No escriban nombres completos ni información personal.</p>
+          <p id="formError" class="form-error" role="alert"></p>
+        </form>
+      </section>
+    </template>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

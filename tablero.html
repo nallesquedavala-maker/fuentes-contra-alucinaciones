@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07120d" />
+    <meta name="description" content="Tablero en tiempo real del workshop Fuentes contra alucinaciones." />
+    <title>Tablero · Fuentes contra alucinaciones</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="board-body">
+    <div class="board-shell">
+      <header class="board-header">
+        <div>
+          <p class="eyebrow">Resultados en tiempo real</p>
+          <h1>Tablero de verificación</h1>
+        </div>
+        <form id="boardSessionForm" class="session-picker">
+          <label for="boardSession">Sesión</label>
+          <input id="boardSession" maxlength="20" value="UTEL2026" />
+          <button type="submit">Abrir</button>
+        </form>
+      </header>
+
+      <main>
+        <section id="boardSummary" class="board-summary" aria-live="polite"></section>
+        <section>
+          <div class="section-heading">
+            <h2>Expedientes activos</h2>
+            <span id="lastUpdate">Esperando equipos…</span>
+          </div>
+          <div id="teamsGrid" class="teams-grid"></div>
+        </section>
+        <section class="insights-section">
+          <div class="section-heading">
+            <h2>Hallazgos de los equipos</h2>
+            <span>Aportaciones abiertas, sin calificación automática</span>
+          </div>
+          <div id="insightsWall" class="insights-wall"></div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="board.js"></script>
+  </body>
+</html>

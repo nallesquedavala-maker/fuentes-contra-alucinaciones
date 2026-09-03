@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "sessions": {
+      "$session": {
+        ".read": "auth != null && $session.matches(/^[A-Z0-9_-]{4,20}$/)",
+        "nextCase": {
+          ".write": "auth != null && newData.isNumber() && newData.val() == (data.exists() ? data.val() + 1 : 1)"
+        },
+        "teams": {
+          "$team": {
+            ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() == auth.uid) || (data.exists() && data.child('ownerUid').val() == auth.uid && newData.child('ownerUid').val() == auth.uid))",
+            ".validate": "newData.hasChildren(['name', 'challengeId', 'stepIndex', 'score', 'maxScore', 'status', 'ownerUid'])",
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
+            "challengeId": { ".validate": "newData.val() == 'hibrido' || newData.val() == 'empleos' || newData.val() == 'productividad'" },
+            "stepIndex": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5" },
+            "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5" },
+            "maxScore": { ".validate": "newData.val() == 5" },
+            "status": { ".validate": "newData.val() == 'active' || newData.val() == 'completed'" },
+            "ownerUid": { ".validate": "newData.val() == auth.uid" },
+            "contribution": { ".validate": "newData.isString() && newData.val().length <= 250" },
+            "verdict": { ".validate": "newData.val() == '' || newData.val() == 'reliable' || newData.val() == 'reserved' || newData.val() == 'discard'" },
+            "$other": { ".validate": true }
+          }
+        }
+      }
+    }
+  }
+}
