@@ -195,10 +195,12 @@ function renderResult(challenge) {
         <div class="result-actions">
           <a class="primary-button" href="tablero.html" target="_blank">Ver tablero</a>
           <button id="reviewCase" class="secondary-button">Revisar expediente</button>
+          <button id="restartActivity" class="secondary-button" type="button">Reiniciar actividad</button>
         </div>
       </div>
     </section>`;
   document.querySelector("#reviewCase").addEventListener("click", renderGame);
+  document.querySelector("#restartActivity").addEventListener("click", clearDevice);
 }
 
 async function restore() {

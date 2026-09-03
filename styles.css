@@ -106,6 +106,7 @@ textarea { width: 100%; min-height: 90px; padding: 13px; resize: vertical; borde
 .result-card p { color: var(--muted); line-height: 1.5; }
 .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
 .result-actions .primary-button { margin: 0; }
+.result-actions #restartActivity { grid-column: 1 / -1; }
 
 .board-body { color: white; background: #07120d; }
 .board-shell { width: min(1500px, 100%); margin: auto; padding: clamp(28px, 4vw, 66px); }
