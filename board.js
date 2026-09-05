@@ -1,5 +1,5 @@
 import { getChallenge } from "./data.js";
-import { cleanSessionCode, mode, subscribeTeams } from "./storage.js";
+import { cleanSessionCode, mode, subscribeParticipants, subscribeTeams } from "./storage.js";
 
 const summary = document.querySelector("#boardSummary");
 const teamsGrid = document.querySelector("#teamsGrid");
@@ -7,10 +7,13 @@ const insightsWall = document.querySelector("#insightsWall");
 const sessionInput = document.querySelector("#boardSession");
 const joinSession = document.querySelector("#joinSession");
 const lastUpdate = document.querySelector("#lastUpdate");
+const participantsTable = document.querySelector("#participantsTable");
 const FACILITATOR_CODE = "8989";
 let unsubscribe = null;
+let unsubscribeParticipants = null;
 let currentSession = "";
 let currentTeams = {};
+let currentParticipants = {};
 
 function escapeHtml(value) {
   return String(value || "")
@@ -64,14 +67,48 @@ function render(teamsObject) {
   lastUpdate.textContent = `Actualizado ${new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
 }
 
+function renderParticipants(participantsObject) {
+  currentParticipants = participantsObject || {};
+  const clearedAt = Number(localStorage.getItem(`utel-evidence-board-cleared:${currentSession}`)) || 0;
+  const participants = Object.values(currentParticipants)
+    .filter((participant) => (Number(participant.createdAt) || 0) > clearedAt)
+    .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "es"));
+  if (!participants.length) {
+    participantsTable.innerHTML = `<div class="empty-participants">Aún no hay integrantes registrados en esta sesión.</div>`;
+    return;
+  }
+  participantsTable.innerHTML = `<table class="participants-table">
+    <thead><tr><th>Integrante</th><th>Equipo</th><th>Caso asignado</th><th>Expediente</th><th>Desafío 2</th><th>Resultado global</th><th>Estado</th></tr></thead>
+    <tbody>${participants.map((participant) => {
+      const grade = participant.grades?.expediente;
+      const grade2 = participant.grades?.desafio2;
+      const challenge = getChallenge(participant.challengeId);
+      const percentages = [grade?.percentage, grade2?.percentage].filter((value) => typeof value === "number");
+      const overall = percentages.length ? Math.round(percentages.reduce((sum, value) => sum + value, 0) / percentages.length) : null;
+      const bothDone = Boolean(grade && grade2);
+      return `<tr>
+        <td><strong>${escapeHtml(participant.name)}</strong></td>
+        <td>${escapeHtml(participant.teamName)}</td>
+        <td>${escapeHtml(challenge?.shortTitle || participant.challengeId)}</td>
+        <td>${grade ? `<strong>${Number(grade.score) || 0}/${Number(grade.maxScore) || 5}</strong>` : "Pendiente"}</td>
+        <td>${grade2 ? `<strong>${Number(grade2.score) || 0}/${Number(grade2.maxScore) || 11}</strong>` : "Pendiente"}</td>
+        <td>${overall === null ? "Pendiente" : `${overall}%`}</td>
+        <td><span class="participant-status ${bothDone ? "complete" : "active"}">${bothDone ? "Ambos desafíos completados" : "En curso"}</span></td>
+      </tr>`;
+    }).join("")}</tbody>
+  </table>`;
+}
+
 async function openSession(value) {
   if (unsubscribe) unsubscribe();
+  if (unsubscribeParticipants) unsubscribeParticipants();
   const session = cleanSessionCode(value);
   currentSession = session;
   sessionInput.value = session;
   joinSession.href = `index.html?sesion=${encodeURIComponent(session)}`;
   localStorage.setItem("utel-evidence-board-session", session);
   unsubscribe = await subscribeTeams(session, render);
+  unsubscribeParticipants = await subscribeParticipants(session, renderParticipants);
 }
 
 document.querySelector("#boardSessionForm").addEventListener("submit", (event) => {
@@ -103,6 +140,7 @@ document.querySelector("#clearBoardButton").addEventListener("click", () => {
   localStorage.setItem(`utel-evidence-board-cleared:${currentSession}`, String(Date.now()));
   localStorage.removeItem("utel-evidence-current-team");
   render(currentTeams);
+  renderParticipants(currentParticipants);
 });
 
 const savedSession = localStorage.getItem("utel-evidence-board-session") || new URLSearchParams(location.search).get("sesion") || "UTEL2026";

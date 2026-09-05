@@ -1,5 +1,5 @@
 import { challenges, getChallenge } from "./data.js";
-import { cleanSessionCode, getTeam, mode, registerTeam, updateTeam } from "./storage.js";
+import { cleanSessionCode, getTeam, mode, normalizeParticipantName, registerTeam, saveExpedienteGrades, updateTeam } from "./storage.js";
 
 const app = document.querySelector("#app");
 const syncStatus = document.querySelector("#syncStatus");
@@ -36,25 +36,58 @@ function renderRegister() {
   app.appendChild(registerTemplate.content.cloneNode(true));
   const requestedSession = new URLSearchParams(location.search).get("sesion");
   if (requestedSession) document.querySelector("#sessionCode").value = cleanSessionCode(requestedSession);
+  const membersList = document.querySelector("#membersList");
+  const updateMemberRows = () => {
+    const rows = [...membersList.querySelectorAll(".member-row")];
+    rows.forEach((row, index) => {
+      const input = row.querySelector("input");
+      const remove = row.querySelector(".remove-member");
+      input.id = `member-${index + 1}`;
+      input.placeholder = `Nombre completo del integrante ${index + 1}`;
+      row.querySelector("label").htmlFor = input.id;
+      row.querySelector("label").textContent = `Integrante ${index + 1}`;
+      remove.setAttribute("aria-label", `Eliminar integrante ${index + 1}`);
+      remove.disabled = rows.length === 1;
+    });
+  };
+  membersList.addEventListener("click", (event) => {
+    const remove = event.target.closest(".remove-member");
+    if (!remove || membersList.children.length === 1) return;
+    remove.closest(".member-row").remove();
+    updateMemberRows();
+  });
+  document.querySelector("#addMember").addEventListener("click", () => {
+    if (membersList.children.length >= 15) return;
+    const row = document.createElement("div");
+    row.className = "member-row";
+    row.innerHTML = `<label class="sr-only"></label><input name="members" minlength="2" maxlength="80" autocomplete="name" required /><button class="remove-member" type="button">×</button>`;
+    membersList.appendChild(row);
+    updateMemberRows();
+    row.querySelector("input").focus();
+  });
+  updateMemberRows();
   document.querySelector("#registerForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const button = event.currentTarget.querySelector("button");
+    const button = event.currentTarget.querySelector('button[type="submit"]');
     const error = document.querySelector("#formError");
     button.disabled = true;
     error.textContent = "";
     try {
-      const members = String(form.get("members") || "")
-        .split(/\r?\n/)
-        .map((name) => name.trim().replace(/\s+/g, " "))
-        .filter(Boolean);
-      if (!members.length) {
-        error.textContent = "Escriban al menos el nombre completo de un integrante.";
+      const members = form.getAll("members").map((name) => String(name).trim().replace(/\s+/g, " "));
+      if (!members.length || members.some((name) => !name)) {
+        error.textContent = "Todos los campos de integrantes deben tener un nombre.";
         button.disabled = false;
         return;
       }
-      if (members.length > 15 || members.some((name) => name.length > 80)) {
-        error.textContent = "Registren máximo 15 integrantes y 80 caracteres por nombre.";
+      if (members.length > 15 || members.some((name) => name.length < 2 || name.length > 80)) {
+        error.textContent = "Cada nombre debe tener entre 2 y 80 caracteres.";
+        button.disabled = false;
+        return;
+      }
+      const normalizedMembers = members.map(normalizeParticipantName);
+      if (new Set(normalizedMembers).size !== normalizedMembers.length) {
+        error.textContent = "No se puede registrar dos veces al mismo integrante.";
         button.disabled = false;
         return;
       }
@@ -180,6 +213,7 @@ async function handleAnswer(event, challenge, step, stepIndex) {
   }
   await updateTeam(state.session, state.team.id, patch);
   state.team = { ...state.team, ...patch };
+  if (step.openPrompt) await saveExpedienteGrades(state.session, state.team, score, state.team.maxScore || 5);
   state.answered = true;
   renderGame();
 }
@@ -216,7 +250,10 @@ async function restore() {
       if (team) {
         state.session = stored.session;
         state.team = team;
-        if (team.status === "completed") renderResult(getChallenge(team.challengeId));
+        if (team.status === "completed") {
+          await saveExpedienteGrades(state.session, team, Number(team.score) || 0, Number(team.maxScore) || 5);
+          renderResult(getChallenge(team.challengeId));
+        }
         else renderGame();
         return;
       }

@@ -27,6 +27,43 @@
             "verdict": { ".validate": "newData.val() == '' || newData.val() == 'reliable' || newData.val() == 'reserved' || newData.val() == 'discard'" },
             "$other": { ".validate": true }
           }
+        },
+        "participants": {
+          ".read": "auth != null",
+          "$participant": {
+            ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() == auth.uid) || (data.exists() && data.child('ownerUid').val() == auth.uid && newData.child('ownerUid').val() == auth.uid))",
+            ".validate": "newData.hasChildren(['participantId', 'name', 'normalizedName', 'teamId', 'teamName', 'challengeId', 'createdAt', 'updatedAt', 'ownerUid']) && newData.child('participantId').val() == $participant && (!data.exists() || (newData.child('participantId').val() == data.child('participantId').val() && newData.child('teamId').val() == data.child('teamId').val() && newData.child('teamName').val() == data.child('teamName').val() && newData.child('challengeId').val() == data.child('challengeId').val() && newData.child('ownerUid').val() == data.child('ownerUid').val()))",
+            "participantId": { ".validate": "newData.isString() && newData.val().length > 0" },
+            "name": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 80" },
+            "normalizedName": { ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 80" },
+            "teamId": { ".validate": "newData.isString() && newData.val().length > 0" },
+            "teamName": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
+            "challengeId": { ".validate": "newData.val() == 'hibrido' || newData.val() == 'empleos' || newData.val() == 'productividad'" },
+            "createdAt": { ".validate": "newData.isNumber()" },
+            "updatedAt": { ".validate": "newData.isNumber()" },
+            "ownerUid": { ".validate": "newData.val() == auth.uid" },
+            "grades": {
+              "expediente": {
+                ".validate": "newData.hasChildren(['score', 'maxScore', 'percentage', 'completedAt']) && (!data.exists() || newData.val() == data.val())",
+                "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5" },
+                "maxScore": { ".validate": "newData.val() == 5" },
+                "percentage": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+                "completedAt": { ".validate": "newData.isNumber()" },
+                "$other": { ".validate": false }
+              },
+              "desafio2": {
+                ".write": "auth != null",
+                ".validate": "newData.hasChildren(['score', 'maxScore', 'percentage', 'completedAt']) && (!data.exists() || newData.val() == data.val())",
+                "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 11" },
+                "maxScore": { ".validate": "newData.val() == 11" },
+                "percentage": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+                "completedAt": { ".validate": "newData.isNumber()" },
+                "$other": { ".validate": false }
+              },
+              "$other": { ".validate": false }
+            },
+            "$other": { ".validate": false }
+          }
         }
       }
     }

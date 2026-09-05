@@ -35,10 +35,24 @@
           <input id="sessionCode" name="sessionCode" maxlength="20" value="UTEL2026" autocomplete="off" required />
           <label for="teamName">Nombre o alias del equipo</label>
           <input id="teamName" name="teamName" maxlength="40" placeholder="Ej. Analistas del dato" autocomplete="off" required />
-          <label for="members">Nombres completos de los integrantes</label>
-          <textarea id="members" name="members" maxlength="800" rows="5" placeholder="Escriban un nombre completo por línea" autocomplete="off" required></textarea>
+          <fieldset class="members-fieldset">
+            <legend>Nombres completos de los integrantes</legend>
+            <div id="membersList" class="members-list">
+              <div class="member-row">
+                <label class="sr-only" for="member-1">Integrante 1</label>
+                <input id="member-1" name="members" minlength="2" maxlength="80" placeholder="Nombre completo del integrante 1" autocomplete="name" required />
+                <button class="remove-member" type="button" aria-label="Eliminar integrante 1">×</button>
+              </div>
+              <div class="member-row">
+                <label class="sr-only" for="member-2">Integrante 2</label>
+                <input id="member-2" name="members" minlength="2" maxlength="80" placeholder="Nombre completo del integrante 2" autocomplete="name" required />
+                <button class="remove-member" type="button" aria-label="Eliminar integrante 2">×</button>
+              </div>
+            </div>
+            <button id="addMember" class="add-member" type="button">+ Agregar integrante</button>
+          </fieldset>
           <button class="primary-button" type="submit">Recibir desafío</button>
-          <p class="privacy-note">Estos nombres quedarán asociados al registro del equipo.</p>
+          <p class="privacy-note">Los nombres se utilizarán únicamente para identificar las calificaciones de esta actividad.</p>
           <p id="formError" class="form-error" role="alert"></p>
         </form>
       </section>
