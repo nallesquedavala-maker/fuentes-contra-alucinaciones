@@ -141,8 +141,8 @@ textarea { width: 100%; min-height: 90px; padding: 13px; resize: vertical; borde
 .facilitator-panel input { min-height: 40px; padding: 0 11px; color: white; background: #111f16; border: 1px solid #304238; border-radius: 8px; }
 .facilitator-panel button { min-height: 40px; padding: 0 14px; color: #061008; background: var(--green); border: 0; border-radius: 8px; font-weight: 800; cursor: pointer; }
 .facilitator-panel .facilitator-error { color: #ff9b9b; }
-.facilitator-controls { grid-template-columns: 1fr auto; }
-.facilitator-controls button { color: white; background: #b42318; }
+.facilitator-controls { grid-template-columns: 1fr auto auto; }
+.facilitator-controls #clearBoardButton { color: white; background: #b42318; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .board-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 30px 0 44px; background: #2b3b31; border: 1px solid #2b3b31; }
 .board-summary article { padding: 26px 30px; background: #0d1a12; }

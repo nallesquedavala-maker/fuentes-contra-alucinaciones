@@ -135,6 +135,49 @@ document.querySelector("#facilitatorAccessForm").addEventListener("submit", (eve
   document.querySelector("#facilitatorControls").hidden = false;
 });
 
+function csvCell(value) {
+  const text = String(value ?? "");
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+function downloadParticipantsCsv() {
+  const clearedAt = Number(localStorage.getItem(`utel-evidence-board-cleared:${currentSession}`)) || 0;
+  const participants = Object.values(currentParticipants)
+    .filter((participant) => (Number(participant.createdAt) || 0) > clearedAt)
+    .sort((a, b) => String(a.teamName || "").localeCompare(String(b.teamName || ""), "es") || String(a.name || "").localeCompare(String(b.name || ""), "es"));
+
+  const header = ["Integrante", "Equipo", "Caso asignado", "Expediente", "Desafío 2", "Resultado global (%)", "Estado"];
+  const rows = participants.map((participant) => {
+    const grade = participant.grades?.expediente;
+    const grade2 = participant.grades?.desafio2;
+    const challenge = getChallenge(participant.challengeId);
+    const percentages = [grade?.percentage, grade2?.percentage].filter((value) => typeof value === "number");
+    const overall = percentages.length ? Math.round(percentages.reduce((sum, value) => sum + value, 0) / percentages.length) : "";
+    return [
+      participant.name || "",
+      participant.teamName || "",
+      challenge?.shortTitle || participant.challengeId || "",
+      grade ? `${Number(grade.score) || 0}/${Number(grade.maxScore) || 5}` : "Pendiente",
+      grade2 ? `${Number(grade2.score) || 0}/${Number(grade2.maxScore) || 11}` : "Pendiente",
+      overall,
+      grade && grade2 ? "Ambos desafíos completados" : "En curso"
+    ];
+  });
+
+  const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n");
+  const blob = new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `calificaciones-${currentSession}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+document.querySelector("#downloadCsvButton").addEventListener("click", downloadParticipantsCsv);
+
 document.querySelector("#clearBoardButton").addEventListener("click", () => {
   if (!window.confirm("¿Ocultar todos los equipos actuales de este tablero?")) return;
   localStorage.setItem(`utel-evidence-board-cleared:${currentSession}`, String(Date.now()));
