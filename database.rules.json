@@ -14,7 +14,7 @@
             ".validate": "newData.hasChildren(['name', 'challengeId', 'stepIndex', 'score', 'maxScore', 'status', 'ownerUid']) && (data.exists() || newData.hasChild('members'))",
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
             "members": {
-              ".validate": "newData.hasChildren() && newData.numChildren() <= 15",
+              ".validate": "newData.hasChildren()",
               "$member": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 80" }
             },
             "challengeId": { ".validate": "newData.val() == 'hibrido' || newData.val() == 'empleos' || newData.val() == 'productividad'" },
