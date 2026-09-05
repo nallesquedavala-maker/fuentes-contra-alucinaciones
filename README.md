@@ -11,7 +11,7 @@ Juego móvil para tres equipos y tablero de resultados en tiempo real.
 5. Sube esta carpeta a Vercel como un sitio estático.
 6. Abre `/tablero` en la computadora que se proyectará. Los equipos usan la página principal.
 
-El código de sesión inicial es `UTEL2026`. Puedes cambiarlo al comenzar el taller. Usa un código poco predecible para cada aplicación real.
+El código de sesión inicial es `UTEL0905`. Puedes cambiarlo al comenzar el taller. Usa un código poco predecible para cada aplicación real.
 
 ## Probar sin Firebase
 

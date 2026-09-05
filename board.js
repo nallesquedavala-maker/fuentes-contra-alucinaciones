@@ -186,7 +186,7 @@ document.querySelector("#clearBoardButton").addEventListener("click", () => {
   renderParticipants(currentParticipants);
 });
 
-const savedSession = localStorage.getItem("utel-evidence-board-session") || new URLSearchParams(location.search).get("sesion") || "UTEL2026";
+const savedSession = localStorage.getItem("utel-evidence-board-session") || new URLSearchParams(location.search).get("sesion") || "UTEL0905";
 sessionInput.value = savedSession;
 mode().then((currentMode) => {
   document.body.dataset.mode = currentMode;
